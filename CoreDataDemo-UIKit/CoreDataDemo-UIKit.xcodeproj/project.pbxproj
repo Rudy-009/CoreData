@@ -14,7 +14,7 @@
 		63C77FBC2E6ABB3700CD8A1E /* Exceptions for "CoreDataDemo-UIKit" folder in "CoreDataDemo-UIKit" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				App/Info.plist,
 			);
 			target = 63C77FA92E6ABB3500CD8A1E /* CoreDataDemo-UIKit */;
 		};
