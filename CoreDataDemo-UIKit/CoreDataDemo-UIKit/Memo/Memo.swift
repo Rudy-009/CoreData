@@ -8,6 +8,7 @@
 import Foundation
 
 public struct Memo {
+    
     let id: UUID = UUID()
     var title: String
     var content: String

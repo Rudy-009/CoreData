@@ -9,6 +9,8 @@ import Foundation
 
 public protocol MemoModelProtocol {
     
+    var list: [Memo] { get }
+    
     func addMemo(title: String, content: String)
     
     func editMemo(id: UUID, title: String?, content: String?)

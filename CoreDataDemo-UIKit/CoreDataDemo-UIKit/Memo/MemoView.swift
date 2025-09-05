@@ -6,8 +6,11 @@
 //
 
 import UIKit
+import Combine
 
 class MemoView: UIView {
+    
+    private lazy var memoViewModel: MemoModelProtocol = MemoViewModel()
     
     public lazy var previewTableView: UITableView = {
         let table = UITableView()
@@ -27,7 +30,7 @@ class MemoView: UIView {
 extension MemoView: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        <#code#>
+        return memoViewModel.list.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
