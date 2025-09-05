@@ -7,14 +7,19 @@
 
 import UIKit
 
+protocol MemoPreviewCellDelegate {
+    func likedPressed(_ memo: Memo)
+}
+
 final class MemoPreviewCell: UITableViewCell {
     
     private var memo: Memo?
+    private var delegate: MemoPreviewCellDelegate?
     static let reuseIdentifier = "MemoPreviewCell"
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17, weight: .bold)
+        label.font = .systemFont(ofSize: 24, weight: .bold)
         label.numberOfLines = 1
         return label
     }()
@@ -31,7 +36,9 @@ final class MemoPreviewCell: UITableViewCell {
         return button
     }()
     
-    func configure(with memo: Memo) {
+    func configure(with memo: Memo, delegate: MemoPreviewCellDelegate) {
+        self.memo = memo
+        self.delegate = delegate
         titleLabel.text = memo.title
         guard let content = memo.content else { contentPreviewLabel.text = nil; return }
         guard content.count > 30 else { contentPreviewLabel.text = content; return }
@@ -65,7 +72,7 @@ final class MemoPreviewCell: UITableViewCell {
             likeButton.heightAnchor.constraint(equalToConstant: 70),
             
             // Title label constraints
-            titleLabel.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
+            titleLabel.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor, constant: 20),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: likeButton.leadingAnchor, constant: -12),
             
@@ -74,10 +81,17 @@ final class MemoPreviewCell: UITableViewCell {
             contentPreviewLabel.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
             contentPreviewLabel.trailingAnchor.constraint(equalTo: likeButton.leadingAnchor, constant: -12),
         ])
+        
+        likeButton.addTarget(self, action: #selector(handleLike), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    @objc
+    func handleLike() {
+        delegate?.likedPressed(self.memo!)
     }
     
 }
