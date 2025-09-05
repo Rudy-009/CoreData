@@ -11,23 +11,22 @@ import Foundation
 final class MemoViewModel: ObservableObject, MemoModelProtocol {
     
     private var cancellables: Set<AnyCancellable> = []
-    private var memoCoreData: MemoCoreData
+    private var memoCoreData: MemoCoreDataProtocol
     
     var listPublisher: AnyPublisher<[Memo], Never> {
         $list.eraseToAnyPublisher()
     }
     
     @Published var list: [Memo] = []
-    
-    init(memoCoreData: MemoCoreData) {
+
+    init(memoCoreData: MemoCoreDataProtocol = MemoCoreData(viewContext: CoreDataStack.shared.viewContext)) {
         self.memoCoreData = memoCoreData
-        _ = self.fetchMemos()
     }
-    
+        
     func addMemo(title: String, content: String) {
         let memo = Memo(title: title, content: content)
         switch memoCoreData.saveMemo(memo) {
-        case .success(let success):
+        case .success(_):
             list.append(memo)
         case .failure(let failure):
             print(failure.localizedDescription)

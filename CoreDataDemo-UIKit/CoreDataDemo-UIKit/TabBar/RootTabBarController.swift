@@ -16,7 +16,7 @@ class RootTabBarController: UITabBarController {
     
     private func setupTabs() {
         // 탭에 넣을 VC들 생성
-        let memoVC = UINavigationController(rootViewController: MemoViewController())
+        let memoVC = UINavigationController(rootViewController: MemoListViewController())
         memoVC.tabBarItem = UITabBarItem(
             title: "memo",
             image: UIImage(systemName: "square.and.pencil.circle"),

@@ -6,58 +6,53 @@
 //
 
 import UIKit
-import Combine
 
-class MemoView: UIView {
-    
-    var memoViewModel: MemoModelProtocol?
-    private var cancellables: Set<AnyCancellable> = []
-    
-    public lazy var previewTableView: UITableView = {
-        let table = UITableView()
-        table.register(MemoPreviewCell.self, forCellReuseIdentifier: MemoPreviewCell.reuseIdentifier)
-        return table
+final class MemoView: UIView {
+
+    // 제목 입력
+    let titleTextField: UITextField = {
+        let tf = UITextField()
+        tf.placeholder = "제목을 입력하세요"
+        tf.borderStyle = .roundedRect
+        return tf
     }()
-    
-    public lazy var addButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "square.and.pencil.circle"), for: .normal)
-        return button
+
+    // 내용 입력
+    let contentTextView: UITextView = {
+        let tv = UITextView()
+        tv.layer.borderWidth = 1
+        tv.layer.borderColor = UIColor.lightGray.cgColor
+        tv.layer.cornerRadius = 8
+        tv.font = UIFont.systemFont(ofSize: 16)
+        return tv
     }()
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .white
-        addSubview(previewTableView)
-        addSubview(addButton)
-        previewTableView.translatesAutoresizingMaskIntoConstraints = false
-        addButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            previewTableView.topAnchor.constraint(equalTo: self.topAnchor),
-            previewTableView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            previewTableView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            previewTableView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            
-            addButton.widthAnchor.constraint(equalToConstant: 50),
-            addButton.heightAnchor.constraint(equalToConstant: 50),
-            addButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -100),
-            addButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
-        ])
-        
-        addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
+        setupLayout()
     }
-    
-    @objc
-    private func addButtonTapped() {
-        print("show add memo view")
-    }
-    
-    func setViewModel(_ viewModel: MemoModelProtocol) {
-        self.memoViewModel = viewModel
-    }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupLayout() {
+        addSubview(titleTextField)
+        addSubview(contentTextView)
+
+        titleTextField.translatesAutoresizingMaskIntoConstraints = false
+        contentTextView.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            titleTextField.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20),
+            titleTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            titleTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            titleTextField.heightAnchor.constraint(equalToConstant: 44),
+
+            contentTextView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 12),
+            contentTextView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            contentTextView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            contentTextView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -20)
+        ])
     }
 }

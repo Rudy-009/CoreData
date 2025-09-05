@@ -6,48 +6,80 @@
 //
 
 import UIKit
-import Combine
 
-class MemoViewController: UIViewController {
-    
-    private let memoViewModel: MemoModelProtocol = MemoViewModel()
+final class MemoViewController: UIViewController {
     private let memoView = MemoView()
-    private var cancellables: Set<AnyCancellable> = []
+    private let viewModel: MemoModelProtocol
+    private let mode: MemoMode
+    
+    init(viewModel: MemoModelProtocol, mode: MemoMode) {
+        self.viewModel = viewModel
+        self.mode = mode
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func loadView() {
+        view = memoView
+    }
     
     override func viewDidLoad() {
-        self.view = memoView
-        self.memoView.previewTableView.delegate = self
-        self.memoView.previewTableView.dataSource = self
+        super.viewDidLoad()
+        setupNavigation()
+        setupDataIfNeeded()
+    }
+    
+    private func setupNavigation() {
+        switch mode {
+        case .add:
+            navigationItem.title = "새 메모"
+            navigationItem.rightBarButtonItem = UIBarButtonItem(
+                title: "저장",
+                style: .done,
+                target: self,
+                action: #selector(savePressed)
+            )
+        case .edit:
+            navigationItem.title = "메모 편집"
+            navigationItem.rightBarButtonItem = UIBarButtonItem(
+                title: "수정",
+                style: .done,
+                target: self,
+                action: #selector(editPressed)
+            )
+        }
+    }
+    
+    private func setupDataIfNeeded() {
+        if case let .edit(memo) = mode {
+            memoView.titleTextField.text = memo.title
+            memoView.contentTextView.text = memo.content
+        }
+    }
+    
+    @objc private func savePressed() {
+        let title = memoView.titleTextField.text ?? ""
+        let content = memoView.contentTextView.text ?? ""
         
-        memoView.setViewModel(memoViewModel)
-        memoViewModel.listPublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] list in
-                self?.memoView.previewTableView.reloadData()
-            }
-            .store(in: &cancellables)
+        viewModel.addMemo(title: title, content: content)
+        dismiss(animated: true)
     }
-
+    
+    @objc private func editPressed() {
+        if case let .edit(memo) = mode {
+            let title = memoView.titleTextField.text ?? ""
+            let content = memoView.contentTextView.text ?? ""
+            
+            viewModel.editMemo(id: memo.id, title: title, content: content)
+        }
+        dismiss(animated: true)
+    }
 }
 
-extension MemoViewController: UITableViewDelegate, UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return memoViewModel.list.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = memoView.previewTableView.dequeueReusableCell(withIdentifier: MemoPreviewCell.reuseIdentifier) as! MemoPreviewCell
-        cell.configure(with: memoViewModel.list[indexPath.row], delegate: self)
-        return cell
-    }
-    
-}
-
-extension MemoViewController: MemoPreviewCellDelegate {
-    
-    func likedPressed(_ memo: Memo) {
-        memoViewModel.toggleLike(id: memo.id)
-    }
-    
+public enum MemoMode {
+    case add
+    case edit(memo: Memo) // CoreData Entity를 전달받아 편집
 }
