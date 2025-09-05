@@ -9,7 +9,7 @@ import Foundation
 
 public struct Memo {
     
-    let id: UUID = UUID()
+    var id: UUID = UUID()
     var title: String
     var content: String?
     var createdAt: Date = Date()
