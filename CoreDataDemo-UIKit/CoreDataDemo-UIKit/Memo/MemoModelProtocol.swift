@@ -19,7 +19,7 @@ public protocol MemoModelProtocol {
     
     func deleteMemo(id: UUID)
     
-    func fetchMemos() -> [Memo]
+    func fetchMemos() -> [Memo]?
     
     func toggleLike(id: UUID)
     

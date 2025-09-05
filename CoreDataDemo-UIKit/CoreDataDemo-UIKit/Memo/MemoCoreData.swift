@@ -12,6 +12,7 @@ protocol MemoCoreDataProtocol {
     func fetchMemos() -> Result<[Memo], CoreDataError>
     func saveMemo(_ memo: Memo) -> Result<Bool, CoreDataError>
     func deleteMemo(_ memo: Memo) -> Result<Bool, CoreDataError>
+    func editMemo(_ memo: Memo) -> Result<Bool, CoreDataError>
 }
 
 class MemoCoreData: MemoCoreDataProtocol {
@@ -66,6 +67,27 @@ class MemoCoreData: MemoCoreDataProtocol {
             let result = try viewContext.fetch(fetchRequest)
             result.forEach { memoEntity in
                 viewContext.delete(memoEntity)
+            }
+            try viewContext.save()
+            return .success(true)
+        } catch {
+            return .failure(CoreDataError.fetchFailed("MemoEntity"))
+        }
+    }
+    
+    func editMemo(_ memo: Memo) -> Result<Bool, CoreDataError> {
+        let fetchRequest: NSFetchRequest<MemoEntity> = MemoEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", memo.id.uuidString)
+        
+        do {
+            let result = try viewContext.fetch(fetchRequest)
+            result.forEach { memoEntity in
+                memoEntity.title = memo.title
+                memoEntity.content = memo.content
+                memoEntity.createdAt = memo.createdAt
+                memoEntity.editedAt = memo.editedAt
+                memoEntity.lastReadAt = memo.lastReadAt
+                memoEntity.liked = memo.liked
             }
             try viewContext.save()
             return .success(true)

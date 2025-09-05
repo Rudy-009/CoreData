@@ -11,47 +11,70 @@ import Foundation
 final class MemoViewModel: ObservableObject, MemoModelProtocol {
     
     private var cancellables: Set<AnyCancellable> = []
+    private var memoCoreData: MemoCoreData
     
     var listPublisher: AnyPublisher<[Memo], Never> {
         $list.eraseToAnyPublisher()
     }
-    @Published var list: [Memo] = [
-        Memo(title: "title", content: "lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem ", liked: true),
-        Memo(title: "bread recipe", content: "bread recipe bread recipe bread recipe bread recipe bread recipe bread recipe ", liked: false),
-        Memo(title: "birthday plan", content: "birthday plan birthday plan birthday plan birthday plan birthday plan", liked: false),
-    ]
     
-    init() {
-        
+    @Published var list: [Memo] = []
+    
+    init(memoCoreData: MemoCoreData) {
+        self.memoCoreData = memoCoreData
+        _ = self.fetchMemos()
     }
     
     func addMemo(title: String, content: String) {
-        list.append(Memo(title: title, content: content))
+        let memo = Memo(title: title, content: content)
+        switch memoCoreData.saveMemo(memo) {
+        case .success(let success):
+            list.append(memo)
+        case .failure(let failure):
+            print(failure.localizedDescription)
+        }
     }
     
     func editMemo(id: UUID, title: String?, content: String?) {
-        guard let index = list.firstIndex(where: {$0.id == id}) else {
-            return
-        }
+        guard let index = list.firstIndex(where: {$0.id == id}) else { return }
         list[index].edit(title: title, content: content)
+        switch memoCoreData.editMemo(list[index]) {
+        case .success(let success):
+            print("edit success: \(success)")
+        case .failure(let failure):
+            print(failure.localizedDescription)
+        }
     }
     
     func deleteMemo(id: UUID) {
-        guard let index = list.firstIndex(where: {$0.id == id}) else {
-            return
+        guard let index = list.firstIndex(where: {$0.id == id}) else { return }
+        switch memoCoreData.deleteMemo(list[index]) {
+        case .success(_):
+            list.remove(at: index)
+        case .failure(let error):
+            print(error.localizedDescription)
         }
-        list.remove(at: index)
     }
     
-    func fetchMemos() -> [Memo] {
-        return list
+    func fetchMemos() -> [Memo]? {
+        switch memoCoreData.fetchMemos() {
+        case .success(let success):
+            self.list = success
+            return success
+        case .failure(let failure):
+            print(failure.localizedDescription)
+            return nil
+        }
     }
     
     func toggleLike(id: UUID) {
-        guard let index = list.firstIndex(where: {$0.id == id}) else {
-            return
-        }
+        guard let index = list.firstIndex(where: {$0.id == id}) else { return }
         _ = list[index].toggleLike()
+        switch memoCoreData.editMemo(list[index]) {
+        case .success(let success):
+            print(success)
+        case .failure(let failure):
+            print(failure.localizedDescription)
+        }
     }
     
     func searchMemos(keyword: String) -> [Memo] {
