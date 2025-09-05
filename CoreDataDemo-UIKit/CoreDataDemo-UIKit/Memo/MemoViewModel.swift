@@ -8,51 +8,7 @@
 import Combine
 import Foundation
 
-struct Memo {
-    let id: UUID = UUID()
-    var title: String
-    var content: String
-    var createdAt: Date = Date()
-    var editedAt: Date = Date()
-    var lastReadAt: Date = Date()
-    var liked: Bool = false
-    
-    mutating func edit(title: String?, content: String?) {
-        if let title = title {
-            self.title = title
-        }
-        if let content = content {
-            self.content = content
-        }
-        self.editedAt = Date()
-    }
-    
-    mutating func read() {
-        self.lastReadAt = Date()
-    }
-    
-    mutating func toggleLike() -> Bool {
-        self.liked.toggle()
-        return liked
-    }
-}
-
-protocol MemoModelProtocol {
-    
-    func addMemo(title: String, content: String)
-    
-    func editMemo(id: UUID, title: String?, content: String?)
-    
-    func deleteMemo(id: UUID)
-    
-    func fetchMemos() -> [Memo]
-    
-    func toggleLike(id: UUID)
-    
-    func searchMemos(keyword: String) -> [Memo]
-}
-
-class MemoViewModel: ObservableObject, MemoModelProtocol {
+final class MemoViewModel: ObservableObject, MemoModelProtocol {
     
     @Published var list: [Memo] = []
     
