@@ -6,18 +6,38 @@
 //
 
 import UIKit
+import Combine
 
 class MemoViewController: UIViewController {
     
+    private let memoView = MemoView()
+    private var cancellables: Set<AnyCancellable> = []
+    
     override func viewDidLoad() {
+        self.view = memoView
+        self.memoView.previewTableView.delegate = self
+        self.memoView.previewTableView.dataSource = self
         
+        memoView.memoViewModel.listPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] list in
+                self?.memoView.previewTableView.reloadData()
+            }
+            .store(in: &cancellables)
     }
 
 }
 
-// 1. 메모의 미리보기 UITableView, 내용은 한 줄
-
-// 2. 편집 화면으로 갈 수 있는 버튼
-
-// 3. UITextView로 메모 작성, UITextField로 메모 제목 작성
-
+extension MemoViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return memoView.memoViewModel.list.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = memoView.previewTableView.dequeueReusableCell(withIdentifier: MemoPreviewCell.reuseIdentifier) as! MemoPreviewCell
+        cell.configure(with: memoView.memoViewModel.list[indexPath.row])
+        return cell
+    }
+    
+}

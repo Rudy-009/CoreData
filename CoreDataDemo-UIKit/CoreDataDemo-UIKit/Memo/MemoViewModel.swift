@@ -10,7 +10,20 @@ import Foundation
 
 final class MemoViewModel: ObservableObject, MemoModelProtocol {
     
-    @Published var list: [Memo] = []
+    private var cancellables: Set<AnyCancellable> = []
+    
+    var listPublisher: AnyPublisher<[Memo], Never> {
+        $list.eraseToAnyPublisher()
+    }
+    @Published var list: [Memo] = [
+        Memo(title: "title", content: "lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem ", liked: true),
+        Memo(title: "bread recipe", content: "bread recipe bread recipe bread recipe bread recipe bread recipe bread recipe ", liked: false),
+        Memo(title: "birthday plan", content: "birthday plan birthday plan birthday plan birthday plan birthday plan", liked: false),
+    ]
+    
+    init() {
+        
+    }
     
     func addMemo(title: String, content: String) {
         list.append(Memo(title: title, content: content))
@@ -43,7 +56,7 @@ final class MemoViewModel: ObservableObject, MemoModelProtocol {
     
     func searchMemos(keyword: String) -> [Memo] {
         return list.filter { memo in
-            memo.title.contains(keyword) || memo.content.contains(keyword)
+            memo.title.contains(keyword) || ((memo.content?.contains(keyword)) != nil)
         }
     }
     

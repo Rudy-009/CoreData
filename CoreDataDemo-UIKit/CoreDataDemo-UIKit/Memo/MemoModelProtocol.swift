@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import Combine
 
 public protocol MemoModelProtocol {
     
+    var listPublisher: AnyPublisher<[Memo], Never> { get }
     var list: [Memo] { get }
     
     func addMemo(title: String, content: String)

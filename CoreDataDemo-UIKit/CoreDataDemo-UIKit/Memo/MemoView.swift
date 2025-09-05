@@ -10,32 +10,29 @@ import Combine
 
 class MemoView: UIView {
     
-    private lazy var memoViewModel: MemoModelProtocol = MemoViewModel()
+    lazy var memoViewModel: MemoModelProtocol = MemoViewModel()
+    private var cancellables: Set<AnyCancellable> = []
     
     public lazy var previewTableView: UITableView = {
         let table = UITableView()
+        table.register(MemoPreviewCell.self, forCellReuseIdentifier: MemoPreviewCell.reuseIdentifier)
         return table
     }()
     
     override init(frame: CGRect) {
-        previewTableView.delegate = self
-        previewTableView.dataSource = self
+        super.init(frame: frame)
+        self.backgroundColor = .white
+        addSubview(previewTableView)
+        previewTableView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            previewTableView.topAnchor.constraint(equalTo: self.topAnchor),
+            previewTableView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            previewTableView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            previewTableView.trailingAnchor.constraint(equalTo: self.trailingAnchor)
+        ])
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
-
-extension MemoView: UITableViewDelegate, UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return memoViewModel.list.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        <#code#>
-    }
-    
-    
 }

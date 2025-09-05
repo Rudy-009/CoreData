@@ -11,7 +11,7 @@ public struct Memo {
     
     let id: UUID = UUID()
     var title: String
-    var content: String
+    var content: String?
     var createdAt: Date = Date()
     var editedAt: Date = Date()
     var lastReadAt: Date = Date()
