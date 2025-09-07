@@ -7,21 +7,21 @@
 
 import CoreData
 import Foundation
+import UIKit
 
 protocol MemoCoreDataProtocol {
-    func fetchMemos() -> Result<[Memo], CoreDataError>
+    func getAllMemos() -> Result<[Memo], CoreDataError>
     func saveMemo(_ memo: Memo) -> Result<Bool, CoreDataError>
     func deleteMemo(_ memo: Memo) -> Result<Bool, CoreDataError>
     func editMemo(_ memo: Memo) -> Result<Bool, CoreDataError>
 }
 
 class MemoCoreData: MemoCoreDataProtocol {
-    private let viewContext: NSManagedObjectContext
-    init(viewContext: NSManagedObjectContext) {
-        self.viewContext = viewContext
-    }
+    private let viewContext: NSManagedObjectContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
-    func fetchMemos() -> Result<[Memo], CoreDataError> {
+    init() { }
+    
+    func getAllMemos() -> Result<[Memo], CoreDataError> {
         let fetchRequest: NSFetchRequest<MemoEntity> = MemoEntity.fetchRequest()
         do {
             let result = try viewContext.fetch(fetchRequest)
@@ -42,14 +42,14 @@ class MemoCoreData: MemoCoreDataProtocol {
         guard let entity = NSEntityDescription.entity(forEntityName: "MemoEntity", in: viewContext) else {
             return .failure(CoreDataError.EntityNotFound("MemoEntity"))
         }
-        let memoObject = NSManagedObject(entity: entity, insertInto: viewContext)
-        memoObject.setValue(memo.id, forKey: "id")
-        memoObject.setValue(memo.title, forKey: "title")
-        memoObject.setValue(memo.content, forKey: "content")
-        memoObject.setValue(memo.createdAt, forKey: "createdAt")
-        memoObject.setValue(memo.editedAt, forKey: "editedAt")
-        memoObject.setValue(memo.lastReadAt, forKey: "lastReadAt")
-        memoObject.setValue(memo.liked, forKey: "liked")
+        let memoEntity = MemoEntity(context: viewContext)
+        memoEntity.id = memo.id
+        memoEntity.title = memo.title
+        memoEntity.content = memo.content
+        memoEntity.createdAt = memo.createdAt
+        memoEntity.editedAt = memo.editedAt
+        memoEntity.lastReadAt = memo.lastReadAt
+        memoEntity.liked = memo.liked
         
         do {
             try viewContext.save()

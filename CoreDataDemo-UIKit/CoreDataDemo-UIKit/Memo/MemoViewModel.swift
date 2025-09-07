@@ -19,15 +19,16 @@ final class MemoViewModel: ObservableObject, MemoModelProtocol {
     
     @Published var list: [Memo] = []
 
-    init(memoCoreData: MemoCoreDataProtocol = MemoCoreData(viewContext: CoreDataStack.shared.viewContext)) {
+    init(memoCoreData: MemoCoreDataProtocol) {
         self.memoCoreData = memoCoreData
     }
         
     func addMemo(title: String, content: String) {
         let memo = Memo(title: title, content: content)
         switch memoCoreData.saveMemo(memo) {
-        case .success(_):
+        case .success(let success):
             list.append(memo)
+            print("add succeess: \(success)")
         case .failure(let failure):
             print(failure.localizedDescription)
         }
@@ -55,8 +56,9 @@ final class MemoViewModel: ObservableObject, MemoModelProtocol {
     }
     
     func fetchMemos() -> [Memo]? {
-        switch memoCoreData.fetchMemos() {
+        switch memoCoreData.getAllMemos() {
         case .success(let success):
+            print(success)
             self.list = success
             return success
         case .failure(let failure):

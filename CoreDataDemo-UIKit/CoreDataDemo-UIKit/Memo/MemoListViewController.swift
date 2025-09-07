@@ -11,7 +11,8 @@ import CoreData
 
 class MemoListViewController: UIViewController {
     
-    lazy var memoCoreData: MemoCoreDataProtocol = MemoCoreData(viewContext: CoreDataStack.shared.viewContext)
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    lazy var memoCoreData: MemoCoreDataProtocol = MemoCoreData()
     lazy var memoViewModel: MemoModelProtocol = MemoViewModel(memoCoreData: memoCoreData)
     private let memoView = MemoListView()
     private var cancellables: Set<AnyCancellable> = []
@@ -21,6 +22,7 @@ class MemoListViewController: UIViewController {
         self.memoView.previewTableView.delegate = self
         self.memoView.previewTableView.dataSource = self
         
+        let _  = memoViewModel.fetchMemos()
         memoView.setViewModel(memoViewModel)
         memoViewModel.listPublisher
             .receive(on: DispatchQueue.main)
