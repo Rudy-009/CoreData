@@ -39,9 +39,6 @@ class MemoCoreData: MemoCoreDataProtocol {
     }
     
     func saveMemo(_ memo: Memo) -> Result<Bool, CoreDataError> {
-        guard let entity = NSEntityDescription.entity(forEntityName: "MemoEntity", in: viewContext) else {
-            return .failure(CoreDataError.EntityNotFound("MemoEntity"))
-        }
         let memoEntity = MemoEntity(context: viewContext)
         memoEntity.id = memo.id
         memoEntity.title = memo.title
