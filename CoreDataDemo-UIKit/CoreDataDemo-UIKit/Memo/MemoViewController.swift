@@ -16,6 +16,7 @@ final class MemoViewController: UIViewController {
         self.viewModel = viewModel
         self.mode = mode
         super.init(nibName: nil, bundle: nil)
+        self.view.backgroundColor = .white
     }
     
     required init?(coder: NSCoder) {
