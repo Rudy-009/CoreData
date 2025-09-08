@@ -37,7 +37,6 @@ final class MemoPreviewCell: UITableViewCell {
     }()
     
     func configure(with memo: Memo, delegate: MemoPreviewCellDelegate) {
-        print("configure called")
         self.memo = memo
         self.delegate = delegate
         titleLabel.text = memo.title
