@@ -18,8 +18,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
+        // 데이터 계층 객체 생성
+        let memoCoreDataRepository = MemoCoreData()
+        // 유즈 케이스 계층 객체 생성 (ViewModel)
+        let memoUseCase = MemoViewModel(memoCoreData: memoCoreDataRepository)
+        // UI 계층 객체 생성 및 의존성 주입
+        let memoListVC = MemoListViewController(memoViewModel: memoUseCase)
+        
+        let rootTabBarController = RootTabBarController(memoListVC: memoListVC)
+        
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = RootTabBarController()
+        window?.rootViewController = rootTabBarController
         window?.makeKeyAndVisible()
     }
 

@@ -14,10 +14,20 @@ class RootTabBarController: UITabBarController {
         setupTabs()
         self.selectedIndex = 1
     }
+        
+    private let memoListVC: MemoListViewController
+    
+    init(memoListVC: MemoListViewController) {
+        self.memoListVC = memoListVC
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private func setupTabs() {
-        // 탭에 넣을 VC들 생성
-        let memoVC = UINavigationController(rootViewController: MemoListViewController())
+        let memoVC = UINavigationController(rootViewController: memoListVC)
         memoVC.tabBarItem = UITabBarItem(
             title: "memo",
             image: UIImage(systemName: "square.and.pencil.circle"),

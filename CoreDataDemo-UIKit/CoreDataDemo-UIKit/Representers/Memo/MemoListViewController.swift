@@ -11,11 +11,18 @@ import CoreData
 
 class MemoListViewController: UIViewController {
     
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    lazy var memoCoreData: MemoCoreDataRepositoryProtocol = MemoCoreData()
-    lazy var memoViewModel: MemoUseCaseProtocol = MemoViewModel(memoCoreData: memoCoreData)
+    var memoViewModel: MemoUseCaseProtocol
     private let memoView = MemoListView()
     private var cancellables: Set<AnyCancellable> = []
+    
+    init(memoViewModel: MemoUseCaseProtocol) {
+        self.memoViewModel = memoViewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         self.view = memoView
