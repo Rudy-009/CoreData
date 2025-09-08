@@ -10,7 +10,7 @@ import Combine
 
 class MemoListView: UIView {
     
-    var memoViewModel: MemoModelProtocol?
+    var memoViewModel: MemoUseCaseProtocol?
     private var cancellables: Set<AnyCancellable> = []
     
     public lazy var previewTableView: UITableView = {
@@ -48,7 +48,7 @@ class MemoListView: UIView {
         
     }
     
-    func setViewModel(_ viewModel: MemoModelProtocol) {
+    func setViewModel(_ viewModel: MemoUseCaseProtocol) {
         self.memoViewModel = viewModel
     }
     

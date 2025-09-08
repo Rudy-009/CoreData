@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-public protocol MemoModelProtocol {
+public protocol MemoUseCaseProtocol {
     
     var listPublisher: AnyPublisher<[Memo], Never> { get }
     var list: [Memo] { get }

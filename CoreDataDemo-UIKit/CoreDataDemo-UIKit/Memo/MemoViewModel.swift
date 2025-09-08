@@ -8,7 +8,7 @@
 import Combine
 import Foundation
 
-final class MemoViewModel: ObservableObject, MemoModelProtocol {
+final class MemoViewModel: ObservableObject, MemoUseCaseProtocol {
     
     private var cancellables: Set<AnyCancellable> = []
     private var memoCoreData: MemoCoreDataProtocol

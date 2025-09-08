@@ -9,10 +9,10 @@ import UIKit
 
 final class MemoViewController: UIViewController {
     private let memoView = MemoView()
-    private let viewModel: MemoModelProtocol
+    private let viewModel: MemoUseCaseProtocol
     private let mode: MemoMode
     
-    init(viewModel: MemoModelProtocol, mode: MemoMode) {
+    init(viewModel: MemoUseCaseProtocol, mode: MemoMode) {
         self.viewModel = viewModel
         self.mode = mode
         super.init(nibName: nil, bundle: nil)
@@ -78,9 +78,4 @@ final class MemoViewController: UIViewController {
         }
         dismiss(animated: true)
     }
-}
-
-public enum MemoMode {
-    case add
-    case edit(memo: Memo) // CoreData Entity를 전달받아 편집
 }
