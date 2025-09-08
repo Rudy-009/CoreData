@@ -11,7 +11,7 @@ import Foundation
 final class MemoViewModel: ObservableObject, MemoUseCaseProtocol {
     
     private var cancellables: Set<AnyCancellable> = []
-    private var memoCoreData: MemoCoreDataProtocol
+    private var memoCoreData: MemoCoreDataRepositoryProtocol
     
     var listPublisher: AnyPublisher<[Memo], Never> {
         $list.eraseToAnyPublisher()
@@ -19,7 +19,7 @@ final class MemoViewModel: ObservableObject, MemoUseCaseProtocol {
     
     @Published var list: [Memo] = []
 
-    init(memoCoreData: MemoCoreDataProtocol) {
+    init(memoCoreData: MemoCoreDataRepositoryProtocol) {
         self.memoCoreData = memoCoreData
     }
         

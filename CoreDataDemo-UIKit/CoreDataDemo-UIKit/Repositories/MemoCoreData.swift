@@ -9,14 +9,14 @@ import CoreData
 import Foundation
 import UIKit
 
-protocol MemoCoreDataProtocol {
+protocol MemoCoreDataRepositoryProtocol {
     func getAllMemos() -> Result<[Memo], CoreDataError>
     func saveMemo(_ memo: Memo) -> Result<Bool, CoreDataError>
     func deleteMemo(_ memo: Memo) -> Result<Bool, CoreDataError>
     func editMemo(_ memo: Memo) -> Result<Bool, CoreDataError>
 }
 
-class MemoCoreData: MemoCoreDataProtocol {
+class MemoCoreData: MemoCoreDataRepositoryProtocol {
     private let viewContext: NSManagedObjectContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     init() { }

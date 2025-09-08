@@ -12,7 +12,7 @@ import CoreData
 class MemoListViewController: UIViewController {
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    lazy var memoCoreData: MemoCoreDataProtocol = MemoCoreData()
+    lazy var memoCoreData: MemoCoreDataRepositoryProtocol = MemoCoreData()
     lazy var memoViewModel: MemoUseCaseProtocol = MemoViewModel(memoCoreData: memoCoreData)
     private let memoView = MemoListView()
     private var cancellables: Set<AnyCancellable> = []
