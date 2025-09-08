@@ -22,7 +22,7 @@ final class MemoViewModel: ObservableObject, MemoUseCaseProtocol {
     init(memoCoreData: MemoCoreDataRepositoryProtocol) {
         self.memoCoreData = memoCoreData
     }
-        
+    
     func addMemo(title: String, content: String) {
         let memo = Memo(title: title, content: content)
         switch memoCoreData.saveMemo(memo) {
@@ -70,7 +70,7 @@ final class MemoViewModel: ObservableObject, MemoUseCaseProtocol {
         guard let index = list.firstIndex(where: {$0.id == id}) else { return }
         _ = list[index].toggleLike()
         switch memoCoreData.editMemo(list[index]) {
-        case .success(let success):
+        case .success(_):
             print("toggle succeed")
         case .failure(let failure):
             print(failure.localizedDescription)

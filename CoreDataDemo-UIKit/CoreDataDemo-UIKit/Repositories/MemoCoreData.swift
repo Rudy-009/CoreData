@@ -17,7 +17,8 @@ protocol MemoCoreDataRepositoryProtocol {
 }
 
 class MemoCoreData: MemoCoreDataRepositoryProtocol {
-    private let viewContext: NSManagedObjectContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    private let viewContext: NSManagedObjectContext = CoreDataStack.shared.viewContext
     
     init() { }
     
