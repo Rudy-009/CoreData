@@ -33,6 +33,7 @@ final class MemoPreviewCell: UITableViewCell {
     
     public lazy var likeButton: UIButton = {
         let button = UIButton()
+        button.setImage(UIImage(systemName: "heart") , for: .normal)
         return button
     }()
     
@@ -74,7 +75,7 @@ final class MemoPreviewCell: UITableViewCell {
             // Title label constraints
             titleLabel.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor, constant: 20),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: likeButton.leadingAnchor, constant: -12),
+            titleLabel.trailingAnchor.constraint(equalTo: likeButton.leadingAnchor, constant: -11),
             
             // Content preview label constraints
             contentPreviewLabel.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor),

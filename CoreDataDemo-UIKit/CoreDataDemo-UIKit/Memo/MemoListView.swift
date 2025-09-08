@@ -15,6 +15,7 @@ class MemoListView: UIView {
     
     public lazy var previewTableView: UITableView = {
         let table = UITableView()
+        table.rowHeight = 100
         table.register(MemoPreviewCell.self, forCellReuseIdentifier: MemoPreviewCell.reuseIdentifier)
         return table
     }()
