@@ -58,7 +58,6 @@ final class MemoViewModel: ObservableObject, MemoUseCaseProtocol {
     func fetchMemos() -> [Memo]? {
         switch memoCoreData.getAllMemos() {
         case .success(let success):
-            print(success)
             self.list = success
             return success
         case .failure(let failure):
@@ -72,7 +71,7 @@ final class MemoViewModel: ObservableObject, MemoUseCaseProtocol {
         _ = list[index].toggleLike()
         switch memoCoreData.editMemo(list[index]) {
         case .success(let success):
-            print(success)
+            print("toggle succeed")
         case .failure(let failure):
             print(failure.localizedDescription)
         }

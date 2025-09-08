@@ -33,19 +33,17 @@ final class MemoPreviewCell: UITableViewCell {
     
     public lazy var likeButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "heart") , for: .normal)
+        button.backgroundColor = .red
         return button
     }()
     
     func configure(with memo: Memo, delegate: MemoPreviewCellDelegate) {
+        print("configure called")
         self.memo = memo
         self.delegate = delegate
         titleLabel.text = memo.title
-        guard let content = memo.content else { contentPreviewLabel.text = nil; return }
-        guard content.count > 30 else { contentPreviewLabel.text = content; return }
-        let index = content.index(content.startIndex, offsetBy: 30)
-        contentPreviewLabel.text = String(content[..<index]) + "..."
         likeButton.setImage( memo.liked ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart") , for: .normal)
+        contentPreviewLabel.text = memo.content
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
