@@ -9,4 +9,7 @@
         <attribute name="liked" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="title" attributeType="String"/>
     </entity>
+    <entity name="ProfileImageEntity" representedClassName="ProfileImageEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="data" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
+    </entity>
 </model>

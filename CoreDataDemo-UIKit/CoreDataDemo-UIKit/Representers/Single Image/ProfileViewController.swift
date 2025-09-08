@@ -6,10 +6,13 @@
 //
 
 import UIKit
+import CoreData
 
 final class ProfileViewController: UIViewController {
     
+    let viewModel = ProfileImageViewModel()
     let profileView = ProfileView()
+    let context: NSManagedObjectContext = CoreDataStack.shared.viewContext
     
     private lazy var picker: UIImagePickerController = {
         let picker = UIImagePickerController()
@@ -20,6 +23,7 @@ final class ProfileViewController: UIViewController {
         super.viewDidLoad()
         self.view = profileView
         profileView.addProfileImageButton.addTarget(self, action: #selector(editProfile), for: .touchUpInside)
+        profileView.setImage(viewModel.loadProfileImage() ?? UIImage(systemName: "person.circle")!)
         picker.delegate = self
     }
     
@@ -36,6 +40,7 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let image = info[.originalImage] as? UIImage else { return }
+        viewModel.saveProfileImage(image)
         profileView.setImage(image)
         dismiss(animated: true, completion: nil)
     }
