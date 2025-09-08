@@ -33,7 +33,6 @@ final class MemoPreviewCell: UITableViewCell {
     
     public lazy var likeButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = .red
         return button
     }()
     
