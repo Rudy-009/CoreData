@@ -1,5 +1,5 @@
 //
-//  MemoCoreData.swift
+//  MemoCoreDataRepository.swift
 //  CoreDataDemo-UIKit
 //
 //  Created by 이승준 on 9/5/25.

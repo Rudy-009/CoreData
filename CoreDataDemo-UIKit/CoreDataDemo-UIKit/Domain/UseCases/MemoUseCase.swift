@@ -62,8 +62,8 @@ class MemoUseCase: MemoUseCaseProtocol {
         }
     }
     
-    func searchMemos(keyword: String) -> [Memo] {
-        return []
+    func searchMemos(keyword: String, memoList: [Memo]) -> [Memo] {
+        return memoList.filter { $0.title.contains(keyword) || $0.content?.contains(keyword) ?? false }
     }
     
 }

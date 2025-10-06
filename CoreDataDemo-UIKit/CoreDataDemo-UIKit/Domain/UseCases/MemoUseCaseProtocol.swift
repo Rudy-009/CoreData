@@ -20,5 +20,5 @@ public protocol MemoUseCaseProtocol {
     
     func toggleLike(memo: Memo)
     
-    func searchMemos(keyword: String) -> [Memo]
+    func searchMemos(keyword: String, memoList: [Memo]) -> [Memo]
 }
