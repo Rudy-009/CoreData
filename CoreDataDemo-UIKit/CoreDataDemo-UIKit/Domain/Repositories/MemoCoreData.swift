@@ -95,10 +95,3 @@ class MemoCoreData: MemoCoreDataRepositoryProtocol {
     }
     
 }
-
-public enum CoreDataError: Error {
-    case fetchFailed(String)
-    case EntityNotFound(String)
-    case saveFailed(String)
-    case deleteFailed(String)
-}
