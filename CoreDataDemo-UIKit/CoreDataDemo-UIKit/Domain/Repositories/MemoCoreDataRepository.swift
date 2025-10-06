@@ -16,7 +16,7 @@ protocol MemoCoreDataRepositoryProtocol {
     func editMemo(_ memo: Memo) -> Result<Bool, CoreDataError>
 }
 
-class MemoCoreData: MemoCoreDataRepositoryProtocol {
+class MemoCoreDataRepository: MemoCoreDataRepositoryProtocol {
     
     private let viewContext: NSManagedObjectContext = CoreDataStack.shared.viewContext
     

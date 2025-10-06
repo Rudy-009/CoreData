@@ -5,82 +5,65 @@
 //  Created by 이승준 on 10/6/25.
 //
 
-import Combine
 import Foundation
 
 class MemoUseCase: MemoUseCaseProtocol {
     
-    private var cancellables: Set<AnyCancellable> = []
-    private var memoCoreData: MemoCoreDataRepositoryProtocol
+    private var memoCoreDatarepository: MemoCoreDataRepositoryProtocol
     
-    var listPublisher: AnyPublisher<[Memo], Never> {
-        $list.eraseToAnyPublisher()
-    }
-    
-    @Published var list: [Memo] = []
-
     init(memoCoreData: MemoCoreDataRepositoryProtocol) {
-        self.memoCoreData = memoCoreData
+        self.memoCoreDatarepository = memoCoreData
     }
     
     func addMemo(title: String, content: String) {
         let memo = Memo(title: title, content: content)
-        switch memoCoreData.saveMemo(memo) {
-        case .success(let success):
-            list.append(memo)
-            print("add succeess: \(success)")
-        case .failure(let failure):
-            print(failure.localizedDescription)
-        }
-    }
-    
-    func editMemo(id: UUID, title: String?, content: String?) {
-        guard let index = list.firstIndex(where: {$0.id == id}) else { return }
-        list[index].edit(title: title, content: content)
-        switch memoCoreData.editMemo(list[index]) {
-        case .success(let success):
-            print("edit success: \(success)")
-        case .failure(let failure):
-            print(failure.localizedDescription)
-        }
-    }
-    
-    func deleteMemo(id: UUID) {
-        guard let index = list.firstIndex(where: {$0.id == id}) else { return }
-        switch memoCoreData.deleteMemo(list[index]) {
+        switch memoCoreDatarepository.saveMemo(memo) {
         case .success(_):
-            list.remove(at: index)
+            return print("save success")
         case .failure(let error):
-            print(error.localizedDescription)
+            return print(error)
+        }
+    }
+    
+    func editMemo(memo: Memo) {
+        switch memoCoreDatarepository.editMemo(memo) {
+        case .success(_):
+            return print("edit \(memo) success")
+        case .failure(let error):
+            return print(error)
+        }
+    }
+    
+    func deleteMemo(memo: Memo) {
+        switch memoCoreDatarepository.deleteMemo(memo) {
+        case .success(_):
+            return print("delete \(memo.title) success")
+        case .failure(let error):
+            return print(error)
         }
     }
     
     func fetchMemos() -> [Memo]? {
-        switch memoCoreData.getAllMemos() {
-        case .success(let success):
-            self.list = success
-            return success
-        case .failure(let failure):
-            print(failure.localizedDescription)
+        switch memoCoreDatarepository.getAllMemos() {
+        case .success(let memos):
+            return memos
+        case .failure(let error):
+            print(error)
             return nil
         }
     }
     
-    func toggleLike(id: UUID) {
-        guard let index = list.firstIndex(where: {$0.id == id}) else { return }
-        _ = list[index].toggleLike()
-        switch memoCoreData.editMemo(list[index]) {
+    func toggleLike(memo: Memo) {
+        switch memoCoreDatarepository.editMemo(memo) {
         case .success(_):
-            print("toggle succeed")
-        case .failure(let failure):
-            print(failure.localizedDescription)
+            return print("change like state of \(memo) to \(memo.liked) is successed")
+        case .failure(let error):
+            return print(error)
         }
     }
     
     func searchMemos(keyword: String) -> [Memo] {
-        return list.filter { memo in
-            memo.title.contains(keyword) || ((memo.content?.contains(keyword)) != nil)
-        }
+        return []
     }
     
 }

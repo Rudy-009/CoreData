@@ -10,18 +10,15 @@ import Combine
 
 public protocol MemoUseCaseProtocol {
     
-    var listPublisher: AnyPublisher<[Memo], Never> { get }
-    var list: [Memo] { get }
-    
     func addMemo(title: String, content: String)
     
-    func editMemo(id: UUID, title: String?, content: String?)
+    func editMemo(memo: Memo)
     
-    func deleteMemo(id: UUID)
+    func deleteMemo(memo: Memo)
     
     func fetchMemos() -> [Memo]?
     
-    func toggleLike(id: UUID)
+    func toggleLike(memo: Memo)
     
     func searchMemos(keyword: String) -> [Memo]
 }

@@ -10,6 +10,10 @@ import Foundation
 
 final class MemoViewModel: ObservableObject {
     
+    private var useCase: MemoUseCaseProtocol
     
+    init(useCase: MemoUseCaseProtocol) {
+        self.useCase = useCase
+    }
     
 }
