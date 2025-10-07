@@ -12,6 +12,7 @@ import CoreData
 class MemoListViewController: UIViewController {
     
     var memoViewModel: MemoViewModelProtocol
+    var memoList: [Memo] = []
     private let memoListView = MemoListView()
     private let input: PassthroughSubject<MemoViewModel.Input, Never> = .init()
     private var cancellables: Set<AnyCancellable> = []
@@ -49,13 +50,32 @@ class MemoListViewController: UIViewController {
             case .showEditMemoViewController(let memo) :
                 self.navigationController?.pushViewController(MemoViewController(viewModel: self.memoViewModel, mode: .edit(memo: memo)) , animated: true)
             case .fetchMemoListSuccess(let memoList) :
-                guard let cell = memoListView.previewTableView.dequeueReusableCell(withIdentifier: MemoPreviewCell.reuseIdentifier, for: IndexPath(row: 0, section: 0)) as? MemoPreviewCell else { return }
-            default :
+                self.memoList = memoList
                 memoListView.previewTableView.reloadData()
+            default :
+                input.send(.fetchMemoList)
                 break
             }
         }
         .store(in: &cancellables)
     }
 
+}
+
+extension MemoListViewController: UITableViewDelegate, UITableViewDataSource, MemoPreviewCellDelegate {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return memoList.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MemoPreviewCell.reuseIdentifier, for: indexPath) as! MemoPreviewCell
+        cell.configure(with: memoList[indexPath.row], delegate: self)
+        return cell
+    }
+    
+    func likedPressed(_ memo: Memo) {
+        self.input.send(.likeMemo(memo))
+    }
+    
 }
