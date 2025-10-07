@@ -21,6 +21,7 @@ final class MemoViewController: UIViewController {
         self.memoViewModel = viewModel
         self.mode = mode
         super.init(nibName: nil, bundle: nil)
+        self.hideKeyboardWhenTappedAround()
         self.view.backgroundColor = .white
         self.bind()
     }
