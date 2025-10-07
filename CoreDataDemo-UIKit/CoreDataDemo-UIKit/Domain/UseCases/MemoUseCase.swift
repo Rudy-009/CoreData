@@ -15,32 +15,17 @@ class MemoUseCase: MemoUseCaseProtocol {
         self.memoCoreDatarepository = memoCoreData
     }
     
-    func addMemo(title: String, content: String) {
+    func addMemo(title: String, content: String) -> Result<Bool, CoreDataError> {
         let memo = Memo(title: title, content: content)
-        switch memoCoreDatarepository.saveMemo(memo) {
-        case .success(_):
-            return print("save success")
-        case .failure(let error):
-            return print(error)
-        }
+        return memoCoreDatarepository.saveMemo(memo)
     }
     
-    func editMemo(memo: Memo) {
-        switch memoCoreDatarepository.editMemo(memo) {
-        case .success(_):
-            return print("edit \(memo) success")
-        case .failure(let error):
-            return print(error)
-        }
+    func editMemo(memo: Memo) -> Result<Bool, CoreDataError> {
+        return memoCoreDatarepository.editMemo(memo)
     }
     
-    func deleteMemo(memo: Memo) {
-        switch memoCoreDatarepository.deleteMemo(memo) {
-        case .success(_):
-            return print("delete \(memo.title) success")
-        case .failure(let error):
-            return print(error)
-        }
+    func deleteMemo(memo: Memo) -> Result<Bool, CoreDataError> {
+        return memoCoreDatarepository.deleteMemo(memo)
     }
     
     func fetchMemos() -> [Memo]? {
@@ -53,13 +38,8 @@ class MemoUseCase: MemoUseCaseProtocol {
         }
     }
     
-    func toggleLike(memo: Memo) {
-        switch memoCoreDatarepository.editMemo(memo) {
-        case .success(_):
-            return print("change like state of \(memo) to \(memo.liked) is successed")
-        case .failure(let error):
-            return print(error)
-        }
+    func toggleLike(memo: Memo) -> Result<Bool, CoreDataError> {
+        return memoCoreDatarepository.editMemo(memo)
     }
     
     func searchMemos(keyword: String, memoList: [Memo]) -> [Memo] {

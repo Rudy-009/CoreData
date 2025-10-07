@@ -10,15 +10,15 @@ import Combine
 
 public protocol MemoUseCaseProtocol {
     
-    func addMemo(title: String, content: String)
+    func addMemo(title: String, content: String) -> Result<Bool, CoreDataError>
     
-    func editMemo(memo: Memo)
+    func editMemo(memo: Memo) -> Result<Bool, CoreDataError>
     
-    func deleteMemo(memo: Memo)
+    func deleteMemo(memo: Memo) -> Result<Bool, CoreDataError>
     
     func fetchMemos() -> [Memo]?
     
-    func toggleLike(memo: Memo)
+    func toggleLike(memo: Memo) -> Result<Bool, CoreDataError>
     
     func searchMemos(keyword: String, memoList: [Memo]) -> [Memo]
 }
