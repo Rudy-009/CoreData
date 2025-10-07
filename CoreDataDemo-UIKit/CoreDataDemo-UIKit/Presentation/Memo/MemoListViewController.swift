@@ -26,9 +26,11 @@ class MemoListViewController: UIViewController {
     }
     
     override func viewDidLoad() {
+        self.hideKeyboardWhenTappedAround()
         self.view = memoListView
         self.bind()
         input.send(.fetchMemoList)
+        memoListView.addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
     }
     
     @objc
@@ -43,11 +45,11 @@ class MemoListViewController: UIViewController {
             guard let self else { return }
             switch event {
             case .showAddMemoViewController :
-                self.present(MemoViewController(viewModel: self.memoViewModel, mode: .add) , animated: true)
+                self.navigationController?.pushViewController (MemoViewController(viewModel: self.memoViewModel, mode: .add) , animated: true)
             case .showEditMemoViewController(let memo) :
-                self.present(MemoViewController(viewModel: self.memoViewModel, mode: .edit(memo: memo)) , animated: true)
+                self.navigationController?.pushViewController(MemoViewController(viewModel: self.memoViewModel, mode: .edit(memo: memo)) , animated: true)
             case .fetchMemoListSuccess(let memoList) :
-                
+                guard let cell = memoListView.previewTableView.dequeueReusableCell(withIdentifier: MemoPreviewCell.reuseIdentifier, for: IndexPath(row: 0, section: 0)) as? MemoPreviewCell else { return }
             default :
                 memoListView.previewTableView.reloadData()
                 break
