@@ -9,10 +9,10 @@ import UIKit
 
 final class MemoViewController: UIViewController {
     private let memoView = MemoView()
-    private let viewModel: MemoUseCaseProtocol
+    private let viewModel: MemoViewModel
     private let mode: MemoMode
     
-    init(viewModel: MemoUseCaseProtocol, mode: MemoMode) {
+    init(viewModel: MemoViewModel, mode: MemoMode) {
         self.viewModel = viewModel
         self.mode = mode
         super.init(nibName: nil, bundle: nil)
@@ -65,7 +65,7 @@ final class MemoViewController: UIViewController {
         let title = memoView.titleTextField.text ?? ""
         let content = memoView.contentTextView.text ?? ""
         
-        viewModel.addMemo(title: title, content: content)
+        
         dismiss(animated: true)
     }
     
@@ -74,7 +74,7 @@ final class MemoViewController: UIViewController {
             let title = memoView.titleTextField.text ?? ""
             let content = memoView.contentTextView.text ?? ""
             
-            viewModel.editMemo(id: memo.id, title: title, content: content)
+            
         }
         dismiss(animated: true)
     }

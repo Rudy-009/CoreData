@@ -19,11 +19,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         // 데이터 계층 객체 생성
-        let memoCoreDataRepository = MemoCoreDataRepository()
-        // 유즈 케이스 계층 객체 생성 (ViewModel)
-        let memoUseCase = MemoViewModel(memoCoreData: memoCoreDataRepository)
+        let memoCoreData = MemoCoreDataRepository()
+        // 유즈 케이스 계층 객체 생성
+        let memoUseCase = MemoUseCase(memoCoreData: memoCoreData)
+        // 뷰 모델 생성
+        let memoViewModel = MemoViewModel(useCase: memoUseCase)
         // UI 계층 객체 생성 및 의존성 주입
-        let memoListVC = MemoListViewController(memoViewModel: memoUseCase)
+        let memoListVC = MemoListViewController(memoViewModel: memoViewModel)
         
         let rootTabBarController = RootTabBarController(memoListVC: memoListVC)
         
