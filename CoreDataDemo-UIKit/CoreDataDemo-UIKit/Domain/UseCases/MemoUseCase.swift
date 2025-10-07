@@ -28,14 +28,8 @@ class MemoUseCase: MemoUseCaseProtocol {
         return memoCoreDatarepository.deleteMemo(memo)
     }
     
-    func fetchMemos() -> [Memo]? {
-        switch memoCoreDatarepository.getAllMemos() {
-        case .success(let memos):
-            return memos
-        case .failure(let error):
-            print(error)
-            return nil
-        }
+    func fetchMemos() -> Result<[Memo], CoreDataError> {
+        return memoCoreDatarepository.getAllMemos()
     }
     
     func toggleLike(memo: Memo) -> Result<Bool, CoreDataError> {
