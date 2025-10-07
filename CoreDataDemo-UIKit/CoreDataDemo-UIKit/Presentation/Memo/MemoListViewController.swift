@@ -31,6 +31,8 @@ class MemoListViewController: UIViewController {
         self.view = memoListView
         self.bind()
         input.send(.fetchMemoList)
+        memoListView.previewTableView.dataSource = self
+        memoListView.previewTableView.delegate = self
         memoListView.addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
     }
     
@@ -53,7 +55,7 @@ class MemoListViewController: UIViewController {
                 self.memoList = memoList
                 memoListView.previewTableView.reloadData()
             default :
-                input.send(.fetchMemoList)
+                memoListView.previewTableView.reloadData()
                 break
             }
         }

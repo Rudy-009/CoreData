@@ -12,7 +12,7 @@ protocol MemoViewModelProtocol: AnyObject {
     func transform(input: AnyPublisher<MemoViewModel.Input, Never>) -> AnyPublisher<MemoViewModel.Output, Never>
 }
 
-final class MemoViewModel: ObservableObject, MemoViewModelProtocol {
+final class MemoViewModel: MemoViewModelProtocol {
     
     enum Input {
         case addMemoButtonTapped
@@ -43,8 +43,6 @@ final class MemoViewModel: ObservableObject, MemoViewModelProtocol {
     private var useCase: MemoUseCaseProtocol
     private let output: PassthroughSubject<Output, Never> = .init()
     private var cancellables = Set<AnyCancellable>()
-    
-    @Published var memos: [Memo] = []
     
     init(useCase: MemoUseCaseProtocol) {
         self.useCase = useCase
