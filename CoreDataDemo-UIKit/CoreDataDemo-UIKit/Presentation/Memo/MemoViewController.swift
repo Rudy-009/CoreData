@@ -6,17 +6,23 @@
 //
 
 import UIKit
+import Combine
 
 final class MemoViewController: UIViewController {
     private let memoView = MemoView()
-    private let viewModel: MemoViewModel
+    private let memoViewModel: MemoViewModelProtocol
     private let mode: MemoMode
+    private var memo: Memo?
     
-    init(viewModel: MemoViewModel, mode: MemoMode) {
-        self.viewModel = viewModel
+    private let input: PassthroughSubject<MemoViewModel.Input, Never> = .init()
+    private var cancellables: Set<AnyCancellable> = []
+    
+    init(viewModel: MemoViewModelProtocol, mode: MemoMode) {
+        self.memoViewModel = viewModel
         self.mode = mode
         super.init(nibName: nil, bundle: nil)
         self.view.backgroundColor = .white
+        self.bind()
     }
     
     required init?(coder: NSCoder) {
@@ -37,25 +43,18 @@ final class MemoViewController: UIViewController {
         switch mode {
         case .add:
             navigationItem.title = "새 메모"
-            navigationItem.rightBarButtonItem = UIBarButtonItem(
-                title: "저장",
-                style: .done,
-                target: self,
-                action: #selector(savePressed)
+            navigationItem.rightBarButtonItem = UIBarButtonItem( title: "저장", style: .done, target: self, action: #selector(savePressed)
             )
         case .edit:
             navigationItem.title = "메모 편집"
-            navigationItem.rightBarButtonItem = UIBarButtonItem(
-                title: "수정",
-                style: .done,
-                target: self,
-                action: #selector(editPressed)
+            navigationItem.rightBarButtonItem = UIBarButtonItem( title: "수정", style: .done, target: self, action: #selector(editPressed)
             )
         }
     }
     
     private func setupDataIfNeeded() {
         if case let .edit(memo) = mode {
+            self.memo = memo
             memoView.titleTextField.text = memo.title
             memoView.contentTextView.text = memo.content
         }
@@ -64,8 +63,7 @@ final class MemoViewController: UIViewController {
     @objc private func savePressed() {
         let title = memoView.titleTextField.text ?? ""
         let content = memoView.contentTextView.text ?? ""
-        
-        
+        input.send(.addMemo(Memo(title: title, content: content)))
         dismiss(animated: true)
     }
     
@@ -73,9 +71,23 @@ final class MemoViewController: UIViewController {
         if case let .edit(memo) = mode {
             let title = memoView.titleTextField.text ?? ""
             let content = memoView.contentTextView.text ?? ""
-            
-            
+            self.memo?.edit(title: title, content: content)
+            guard let newMemo = self.memo else { return }
+            input.send(.eidtMemo(newMemo))
         }
+        
         dismiss(animated: true)
+    }
+    
+    func bind() {
+        let output = memoViewModel.transform(input: input.eraseToAnyPublisher())
+        output.receive(on: DispatchQueue.main)
+            .sink { event in
+            switch event {
+            default :
+                break
+            }
+        }
+        .store(in: &cancellables)
     }
 }

@@ -12,7 +12,8 @@ import CoreData
 class MemoListViewController: UIViewController {
     
     var memoViewModel: MemoViewModelProtocol
-    private let memoView = MemoListView()
+    private let memoListView = MemoListView()
+    private let input: PassthroughSubject<MemoViewModel.Input, Never> = .init()
     private var cancellables: Set<AnyCancellable> = []
     
     init(memoViewModel: MemoViewModelProtocol) {
@@ -25,13 +26,34 @@ class MemoListViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-        self.view = memoView
-        
+        self.view = memoListView
+        self.bind()
+        input.send(.fetchMemoList)
     }
     
     @objc
     private func addButtonTapped() {
-        
+        input.send(.addMemoButtonTapped)
+    }
+    
+    func bind() {
+        let output = memoViewModel.transform(input: input.eraseToAnyPublisher())
+        output.receive(on: DispatchQueue.main)
+        .sink { [weak self] event in
+            guard let self else { return }
+            switch event {
+            case .showAddMemoViewController :
+                self.present(MemoViewController(viewModel: self.memoViewModel, mode: .add) , animated: true)
+            case .showEditMemoViewController(let memo) :
+                self.present(MemoViewController(viewModel: self.memoViewModel, mode: .edit(memo: memo)) , animated: true)
+            case .fetchMemoListSuccess(let memoList) :
+                
+            default :
+                memoListView.previewTableView.reloadData()
+                break
+            }
+        }
+        .store(in: &cancellables)
     }
 
 }

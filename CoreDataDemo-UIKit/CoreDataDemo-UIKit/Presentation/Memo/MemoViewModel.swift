@@ -15,6 +15,8 @@ protocol MemoViewModelProtocol: AnyObject {
 final class MemoViewModel: ObservableObject, MemoViewModelProtocol {
     
     enum Input {
+        case addMemoButtonTapped
+        case editMemoCellTapped(Memo)
         case viewWillAppear
         case fetchMemoList
         case addMemo(Memo)
@@ -24,6 +26,8 @@ final class MemoViewModel: ObservableObject, MemoViewModelProtocol {
     }
     
     enum Output {
+        case showAddMemoViewController
+        case showEditMemoViewController(Memo)
         case fetchMemoListSuccess([Memo])
         case fetchMemoListFailed(Error)
         case addMemoSuccess
@@ -50,6 +54,10 @@ final class MemoViewModel: ObservableObject, MemoViewModelProtocol {
         input.sink { [weak self] input in
             guard let self else { return }
             switch input {
+            case .addMemoButtonTapped:
+                output.send(.showAddMemoViewController)
+            case .editMemoCellTapped(let memo) :
+                output.send(.showEditMemoViewController(memo))
             case .viewWillAppear, .fetchMemoList:
                 switch useCase.fetchMemos() {
                 case .success(let memos):
