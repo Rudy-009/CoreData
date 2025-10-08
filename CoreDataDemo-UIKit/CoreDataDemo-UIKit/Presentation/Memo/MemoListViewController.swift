@@ -11,13 +11,12 @@ import CoreData
 
 class MemoListViewController: UIViewController {
     
-    var memoViewModel: MemoViewModelProtocol
-    var memoList: [Memo] = []
+    var memoViewModel: MemoViewModel
     private let memoListView = MemoListView()
     private let input: PassthroughSubject<MemoViewModel.Input, Never> = .init()
     private var cancellables: Set<AnyCancellable> = []
     
-    init(memoViewModel: MemoViewModelProtocol) {
+    init(memoViewModel: MemoViewModel) {
         self.memoViewModel = memoViewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -51,13 +50,17 @@ class MemoListViewController: UIViewController {
                 self.navigationController?.pushViewController (MemoViewController(viewModel: self.memoViewModel, mode: .add) , animated: true)
             case .showEditMemoViewController(let memo) :
                 self.navigationController?.pushViewController(MemoViewController(viewModel: self.memoViewModel, mode: .edit(memo: memo)) , animated: true)
-            case .fetchMemoListSuccess(let memoList) :
-                self.memoList = memoList
-                memoListView.previewTableView.reloadData()
             default :
-                memoListView.previewTableView.reloadData()
+                // memoListView.previewTableView.reloadData()
                 break
             }
+        }
+        .store(in: &cancellables)
+        
+        memoViewModel.$memoList
+        .sink { [weak self] _ in
+            guard let self else { return }
+            self.memoListView.previewTableView.reloadData()
         }
         .store(in: &cancellables)
     }
@@ -67,17 +70,17 @@ class MemoListViewController: UIViewController {
 extension MemoListViewController: UITableViewDelegate, UITableViewDataSource, MemoPreviewCellDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return memoList.count
+        return memoViewModel.memoList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MemoPreviewCell.reuseIdentifier, for: indexPath) as! MemoPreviewCell
-        cell.configure(with: memoList[indexPath.row], delegate: self)
+        cell.configure(with: memoViewModel.memoList[indexPath.row], delegate: self)
         return cell
     }
     
     func likedPressed(_ memo: Memo) {
-        self.input.send(.likeMemo(memo))
+        self.input.send(.likeMemo(Memo.likedMemo(memo: memo)))
     }
     
 }

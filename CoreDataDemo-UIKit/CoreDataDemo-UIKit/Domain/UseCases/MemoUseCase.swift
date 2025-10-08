@@ -32,8 +32,8 @@ class MemoUseCase: MemoUseCaseProtocol {
         return memoCoreDatarepository.getAllMemos()
     }
     
-    func toggleLike(memo: Memo) -> Result<Bool, CoreDataError> {
-        return memoCoreDatarepository.editMemo(memo)
+    func toggleLike(newStateMemo: Memo) -> Result<Bool, CoreDataError> {
+        return memoCoreDatarepository.editMemo(newStateMemo)
     }
     
     func searchMemos(keyword: String, memoList: [Memo]) -> [Memo] {

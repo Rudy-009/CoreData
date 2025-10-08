@@ -74,7 +74,7 @@ final class MemoViewController: UIViewController {
             let content = memoView.contentTextView.text ?? ""
             self.memo?.edit(title: title, content: content)
             guard let newMemo = self.memo else { return }
-            input.send(.eidtMemo(newMemo))
+            input.send(.editMemo(newMemo))
         }
         
         dismiss(animated: true)

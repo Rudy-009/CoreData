@@ -18,7 +18,7 @@ public protocol MemoUseCaseProtocol {
     
     func fetchMemos() -> Result<[Memo], CoreDataError>
     
-    func toggleLike(memo: Memo) -> Result<Bool, CoreDataError>
+    func toggleLike(newStateMemo: Memo) -> Result<Bool, CoreDataError>
     
     func searchMemos(keyword: String, memoList: [Memo]) -> [Memo]
 }

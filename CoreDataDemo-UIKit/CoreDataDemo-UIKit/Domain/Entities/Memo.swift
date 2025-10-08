@@ -35,4 +35,8 @@ public struct Memo {
         self.liked.toggle()
         return liked
     }
+    
+    static func likedMemo(memo: Memo) -> Memo {
+        return Memo(id: memo.id, title: memo.title, content: memo.content, createdAt: memo.createdAt, editedAt: memo.editedAt, lastReadAt: memo.lastReadAt, liked: !memo.liked)
+    }
 }

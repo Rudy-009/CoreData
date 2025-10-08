@@ -10,6 +10,7 @@ import Foundation
 
 protocol MemoViewModelProtocol: AnyObject {
     func transform(input: AnyPublisher<MemoViewModel.Input, Never>) -> AnyPublisher<MemoViewModel.Output, Never>
+    var memoList: [Memo] { get set }
 }
 
 final class MemoViewModel: MemoViewModelProtocol {
@@ -21,7 +22,7 @@ final class MemoViewModel: MemoViewModelProtocol {
         case fetchMemoList
         case addMemo(Memo)
         case deleteMemo(Memo)
-        case eidtMemo(Memo)
+        case editMemo(Memo)
         case likeMemo(Memo)
     }
     
@@ -34,14 +35,16 @@ final class MemoViewModel: MemoViewModelProtocol {
         case addMemoFailed(Error)
         case deleteMemoSuccess
         case deleteMemoFailed(Error)
-        case eidtMemoSuccess
-        case eidtMemoFailed(Error)
+        case editMemoSuccess
+        case editMemoFailed(Error)
         case likeMemoSuccess
         case likeMemoFailed(Error)
     }
     
     private var useCase: MemoUseCaseProtocol
     private let output: PassthroughSubject<Output, Never> = .init()
+    
+    @Published var memoList: [Memo] = []
     private var cancellables = Set<AnyCancellable>()
     
     init(useCase: MemoUseCaseProtocol) {
@@ -58,14 +61,16 @@ final class MemoViewModel: MemoViewModelProtocol {
                 output.send(.showEditMemoViewController(memo))
             case .viewWillAppear, .fetchMemoList:
                 switch useCase.fetchMemos() {
-                case .success(let memos):
-                    output.send(.fetchMemoListSuccess(memos))
+                case .success(let memoList):
+                    self.memoList = memoList
+                    output.send(.fetchMemoListSuccess(memoList))
                 case .failure(let error):
                     output.send(.fetchMemoListFailed(error))
                 }
-            case .addMemo(let memo):
-                switch useCase.addMemo(title: memo.title, content: memo.content ?? "") {
+            case .addMemo(let newMemo):
+                switch useCase.addMemo(title: newMemo.title, content: newMemo.content ?? "") {
                 case .success(_):
+                    self.addMemo(newMemo)
                     output.send(.addMemoSuccess)
                 case .failure(let error):
                     output.send(.addMemoFailed(error))
@@ -77,16 +82,18 @@ final class MemoViewModel: MemoViewModelProtocol {
                 case .failure(let error):
                     output.send(.deleteMemoFailed(error))
                 }
-            case .eidtMemo(let memo):
+            case .editMemo(let memo):
                 switch useCase.editMemo(memo: memo) {
                 case .success(_):
-                    output.send(.eidtMemoSuccess)
+                    self.updateMemo(memo)
+                    output.send(.editMemoSuccess)
                 case .failure(let error):
-                    output.send(.eidtMemoFailed(error))
+                    output.send(.editMemoFailed(error))
                 }
             case .likeMemo(let memo):
-                switch useCase.toggleLike(memo: memo) {
+                switch useCase.toggleLike(newStateMemo: memo) {
                 case .success(_):
+                    self.toggleLike(memo)
                     output.send(.likeMemoSuccess)
                 case .failure(let error):
                     output.send(.likeMemoFailed(error))
@@ -95,7 +102,29 @@ final class MemoViewModel: MemoViewModelProtocol {
         }
         .store(in: &cancellables)
         return output.eraseToAnyPublisher()
-        
     }
+    
+    func addMemo(_ newMemo: Memo) {
+        memoList.insert(newMemo, at: 0)
+    }
+    
+    func deleteMemo(_ memo: Memo) {
+        if let index = memoList.firstIndex(where: { $0.id == memo.id }) {
+            memoList.remove(at: index)
+        }
+    }
+    
+    func updateMemo(_ memo: Memo) {
+        if let index = memoList.firstIndex(where: { $0.id == memo.id }) {
+            memoList[index] = memo
+        }
+    }
+    
+    func toggleLike(_ memo: Memo) {
+        if let index = memoList.firstIndex(where: { $0.id == memo.id }) {
+            let _ = memoList[index].toggleLike()
+        }
+    }
+    
     
 }
