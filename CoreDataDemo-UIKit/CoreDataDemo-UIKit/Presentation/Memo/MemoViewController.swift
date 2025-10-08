@@ -65,7 +65,7 @@ final class MemoViewController: UIViewController {
         let title = memoView.titleTextField.text ?? ""
         let content = memoView.contentTextView.text ?? ""
         input.send(.addMemo(Memo(title: title, content: content)))
-        dismiss(animated: true)
+        self.navigationController?.popViewController(animated: true)
     }
     
     @objc private func editPressed() {
@@ -76,8 +76,7 @@ final class MemoViewController: UIViewController {
             guard let newMemo = self.memo else { return }
             input.send(.editMemo(newMemo))
         }
-        
-        dismiss(animated: true)
+        self.navigationController?.popViewController(animated: true)
     }
     
     func bind() {
