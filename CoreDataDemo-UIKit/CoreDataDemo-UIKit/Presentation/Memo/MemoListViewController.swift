@@ -42,7 +42,8 @@ class MemoListViewController: UIViewController {
     
     func bind() {
         let output = memoViewModel.transform(input: input.eraseToAnyPublisher())
-        output.receive(on: DispatchQueue.main)
+        output
+        .receive(on: DispatchQueue.main)
         .sink { [weak self] event in
             guard let self else { return }
             switch event {
@@ -58,6 +59,7 @@ class MemoListViewController: UIViewController {
         .store(in: &cancellables)
         
         memoViewModel.$memoList
+        .receive(on: DispatchQueue.main)
         .sink { [weak self] _ in
             guard let self else { return }
             self.memoListView.previewTableView.reloadData()
